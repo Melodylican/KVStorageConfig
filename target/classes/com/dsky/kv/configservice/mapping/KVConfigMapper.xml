@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dsky.kv.configservice.dao.KVConfigMapper">
+	<resultMap id="StoreResultMap" type="com.dsky.kv.configservice.model.StoreBean">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="gameId" property="gameId" jdbcType="VARCHAR" />
+		<result column="gameName" property="gameName" jdbcType="VARCHAR" />
+		<result column="master" property="master" jdbcType="VARCHAR" />
+		<result column="slave" property="slave" jdbcType="VARCHAR" />
+		<result column="dbName" property="dbName" jdbcType="VARCHAR"/>
+		<result column="tbName" property="tbName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Config_Column_List">
+		id,gameId,gameName,master,slave,dbName,tbName
+	</sql>
+	
+	<select id="selectAllStore" resultMap="StoreResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Config_Column_List" />
+		from kv_config  ORDER BY id desc;
+	</select>
+	
+	<select id="selectStoreById" resultMap="StoreResultMap" parameterType="String">
+		select
+		<include refid="Config_Column_List" />
+		from kv_config  where id=#{id};
+	</select>
+	
+	<select id="selectStoreByGameId" resultMap="StoreResultMap" parameterType="String">
+		select
+		<include refid="Config_Column_List" />
+		from kv_config  where gameId=#{gameId};
+	</select>
+	
+	<insert id="insertKVConfig" parameterType="com.dsky.kv.configservice.model.StoreBean">
+		insert into kv_config (gameId,gameName,master,slave,dbName,tbName)
+		values (#{gameId}, #{gameName},#{master},#{slave},#{dbName},#{tbName})
+	</insert>
+	
+	<update id="updateStoreById" parameterType="com.dsky.kv.configservice.model.StoreBean">
+		update kv_config
+		<set>
+			<if test="gameName != null">
+				gameName = #{gameName},
+			</if>
+			<if test="gameId != null">
+				gameId = #{gameId},
+			</if>
+		    <if test="master != null">
+				master = #{master},
+			</if>
+			<if test="slave != null">
+				slave = #{slave},
+			</if>
+			<if test="dbName != null">
+				dbName = #{dbName},
+			</if>
+			<if test="tbName != null">
+				tbName = #{tbName},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteConfigById" >
+		delete from kv_config where id = #{id}
+	</delete>
+	
+</mapper>

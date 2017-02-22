@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dsky.kv.configservice.dao.UserConfigMapper">
+	<resultMap id="UserResultMap" type="com.dsky.kv.configservice.model.UserBean">
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="userRealName" property="userRealName" jdbcType="VARCHAR" />
+		<result column="gameType" property="gameType" jdbcType="VARCHAR" />
+		<result column="role" property="role" jdbcType="VARCHAR" />
+		<result column="registerTime" property="registerTime" jdbcType="TIMESTAMP" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="enabled" property="state" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="User_Column_List">
+		userName,password,userRealName,registerTime,description,enabled,role,gameType
+	</sql>
+	
+	<sql id="GameType_Column_List">
+		id, gameName,department
+	</sql>
+	
+	<select id="selectUserGameType" resultType="String">
+		select gameType from kv_users where userName=#{userName} ;
+	</select>
+	
+	<select id="selectUserRole" resultType="String">
+		select role from kv_users where userName=#{userName} ;
+	</select>
+
+	
+	<select id="selectAllUser" resultMap="UserResultMap" parameterType="java.util.Map">
+		select
+		<include refid="User_Column_List" />
+		from kv_users;
+	</select>
+
+	<select id="selectUserByUserName" resultMap="UserResultMap" >
+		select
+		<include refid="User_Column_List" />
+		from kv_users
+		where userName= #{userName};
+	</select>
+	
+	<update id="updateusertate" parameterType="java.util.Map">
+		update kv_users
+		<set>
+			enabled = #{state,jdbcType=INTEGER}
+		</set>
+		where userName = #{userName}
+	</update>
+	
+	<update id="updateUser" parameterType="com.dsky.kv.configservice.model.UserBean">
+		update kv_users
+		<set>
+			<if test="userName != null">
+				userName = #{userName},
+			</if>
+		    <if test="password != null">
+				password = #{password},
+			</if>
+			<if test="userRealName != null">
+				userRealName = #{userRealName},
+			</if>
+			<if test="registerTime != null">
+				registerTime = #{registerTime},
+			</if>
+			<if test="role != null">
+				role = #{role},
+			</if>
+			<if test="gameType != null">
+				gameType = #{gameType},
+			</if>
+			<if test="description != null">
+				description = #{description},
+			</if>
+		</set>
+		where userName = #{userName}
+	</update>
+	
+	<insert id="insertUser" parameterType="com.dsky.kv.configservice.model.UserBean">
+		insert into kv_users (userName,password,userRealName,registerTime,description,role,gameType)
+		values (#{userName}, #{password},
+		#{userRealName},#{registerTime,jdbcType=TIMESTAMP},#{description}, #{role},#{gameType})
+	</insert>
+	
+	<delete id="deleteUserByUserName" >
+		delete from kv_users
+		where userName = #{userName}
+	</delete>
+	
+</mapper>
